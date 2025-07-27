@@ -7,8 +7,8 @@ const morgan = require('morgan')
 const path = require('path')
 
 const logger = require('./logger')
-const errorHandler = require('../middlewares/errorHandler')
-const notFoundHandler = require('../middlewares/notFoundHandler')
+const { errorHandler, notFoundHandler } = require('../middlewares/errorHandler')
+
 
 // Importar rotas
 const authRoutes = require('../routes/auth')
@@ -103,6 +103,7 @@ const configureExpress = () => {
 
   // Health check (antes das rotas da API)
   if (process.env.HEALTH_CHECK_ENABLED === 'true') {
+    const healthRoutes = require('../routes/health');
     app.use('/health', healthRoutes)
   }
 
@@ -132,9 +133,13 @@ const configureExpress = () => {
     })
   })
 
+  console.log('Tipo do notFoundHandler:', typeof notFoundHandler)
   // Middleware de rota não encontrada
   app.use(notFoundHandler)
 
+  console.log('Tipo do errorHandler:', typeof errorHandler)
+
+ 
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorHandler)
 

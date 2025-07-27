@@ -10,12 +10,12 @@ const startServer = async () => {
     // Conectar ao banco de dados
     await connectDatabase()
 
-    // Configurar Express
+        // Configurar Express
     const app = configureExpress()
 
     // Definir porta
-    const PORT = process.env.PORT || 3000
-    const HOST = process.env.HOST || '0.0.0.0'
+    const PORT = process.env.BACKEND_PORT || 3000
+    const HOST = process.env.BACKEND_HOST || 'localhost'
 
     // Iniciar servidor
     const server = app.listen(PORT, HOST, () => {
