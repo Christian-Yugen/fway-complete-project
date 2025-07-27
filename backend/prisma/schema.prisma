@@ -1,0 +1,211 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de usuário
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  status    String   @default("PENDING_VERIFICATION")
+  
+  // Informações pessoais
+  firstName String
+  lastName  String
+  phone     String?
+  avatar    String?
+  birthDate DateTime?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Verificação de email
+  emailVerified Boolean @default(false)
+  emailVerificationToken String?
+  
+  // Reset de senha
+  passwordResetToken String?
+  passwordResetExpires DateTime?
+  
+  // Relacionamentos
+  profile       UserProfile?
+  refreshTokens RefreshToken[]
+  bookings      Booking[]
+  reviews       Review[]
+  
+  @@map("users")
+}
+
+// Perfil detalhado do usuário
+model UserProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Informações adicionais
+  cpf       String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  country   String? @default("Brasil")
+  
+  // Preferências
+  language  String? @default("pt-BR")
+  timezone  String? @default("America/Sao_Paulo")
+  
+  // Configurações de notificação
+  emailNotifications Boolean @default(true)
+  smsNotifications   Boolean @default(false)
+  pushNotifications  Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("user_profiles")
+}
+
+// Tokens de refresh JWT
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@map("refresh_tokens")
+}
+
+// Modelo de profissional
+model Professional {
+  id     String @id @default(cuid())
+  userId String @unique
+  
+  // Informações profissionais
+  type           String
+  specialization String
+  license        String @unique
+  experience     Int    // anos de experiência
+  
+  // Localização
+  address    String
+  city       String
+  state      String
+  zipCode    String
+  latitude   Float?
+  longitude  Float?
+  
+  // Configurações
+  isActive      Boolean @default(true)
+  isVerified    Boolean @default(false)
+  consultationFee Float?
+  
+  // Horários de trabalho (JSON)
+  workingHours String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacionamentos
+  services  Service[]
+  bookings  Booking[]
+  reviews   Review[]
+  
+  @@map("professionals")
+}
+
+// Serviços oferecidos pelos profissionais
+model Service {
+  id             String @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  
+  name        String
+  description String?
+  price       Float
+  duration    Int    // em minutos
+  isActive    Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacionamentos
+  bookings Booking[]
+  
+  @@map("services")
+}
+
+// Agendamentos
+model Booking {
+  id             String @id @default(cuid())
+  userId         String
+  user           User   @relation(fields: [userId], references: [id])
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  serviceId      String
+  service        Service @relation(fields: [serviceId], references: [id])
+  
+  // Detalhes do agendamento
+  scheduledAt DateTime
+  status      String @default("PENDING")
+  notes       String?
+  
+  // Valores
+  price       Float
+  paymentStatus String? @default("PENDING")
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacionamentos
+  review Review?
+  
+  @@map("bookings")
+}
+
+// Avaliações
+model Review {
+  id        String @id @default(cuid())
+  bookingId String @unique
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  
+  rating    Int    // 1-5
+  comment   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("reviews")
+}
+
+// Logs de auditoria
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  resource  String
+  details   String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  
+  @@map("audit_logs")
+}
+

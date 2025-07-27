@@ -1,0 +1,76 @@
+name = "fway-pwa"
+compatibility_date = "2023-12-01"
+
+[site]
+bucket = "./dist"
+
+[[redirects]]
+from = "/verification"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/dashboard"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/social"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/ai-health"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/iot-monitor"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/ar-training"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/neurosync"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/professional/*"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/booking/*"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/network"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/chat"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/my-bookings"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/profile"
+to = "/index.html"
+status = 200
+
+[[redirects]]
+from = "/search"
+to = "/index.html"
+status = 200
+

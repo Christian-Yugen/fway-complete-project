@@ -1,0 +1,200 @@
+# Arquivos e diretórios a serem ignorados no build Docker
+
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory usado por ferramentas como istanbul
+coverage/
+*.lcov
+
+# Instrumentação de cobertura gerada pelo nyc
+.nyc_output/
+
+# Diretório de dependências do Grunt
+.grunt/
+
+# Diretório de dependências do Bower
+bower_components/
+
+# Diretório de dependências do node-waf
+.lock-wscript
+
+# Binários compilados (https://nodejs.org/api/addons.html)
+build/Release/
+
+# Diretórios de dependências
+node_modules/
+jspm_packages/
+
+# Arquivos de configuração do TypeScript
+*.tsbuildinfo
+
+# Cache opcional do npm
+.npm/
+
+# Cache opcional do eslint
+.eslintcache
+
+# Cache do Microbundle
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Histórico REPL opcional
+.node_repl_history
+
+# Saída do 'npm pack'
+*.tgz
+
+# Arquivo de integridade do Yarn
+.yarn-integrity
+
+# Arquivo de variáveis de ambiente dotenv
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache do parcel-bundler
+.cache/
+.parcel-cache/
+
+# Saída do Next.js
+.next/
+
+# Saída de build do Nuxt.js
+.nuxt/
+dist/
+
+# Arquivos de build do Gatsby
+.cache/
+public/
+
+# Diretório de dependências do vuepress
+.vuepress/dist/
+
+# Diretório de cache do Serverless
+.serverless/
+
+# Cache do FuseBox
+.fusebox/
+
+# Arquivos locais do DynamoDB
+.dynamodb/
+
+# Arquivo de porta do TernJS
+.tern-port
+
+# Arquivos de desenvolvimento
+*.dev
+*.development
+
+# Arquivos de teste
+tests/
+test/
+__tests__/
+*.test.js
+*.spec.js
+
+# Documentação
+docs/
+*.md
+README*
+CHANGELOG*
+LICENSE*
+
+# Arquivos de configuração de desenvolvimento
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Arquivos temporários
+tmp/
+temp/
+.tmp/
+
+# Arquivos de backup
+*.bak
+*.backup
+
+# Arquivos do sistema operacional
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Arquivos Git
+.git/
+.gitignore
+.gitattributes
+
+# Arquivos Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Arquivos de CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+azure-pipelines.yml
+
+# Arquivos de configuração de editores
+.editorconfig
+.prettierrc*
+.eslintrc*
+
+# Arquivos de monitoramento
+monitoring/
+
+# Scripts de desenvolvimento
+scripts/dev*
+scripts/test*
+
+# Uploads e dados temporários
+uploads/
+data/
+storage/
+
+# Certificados SSL
+ssl/
+certs/
+*.pem
+*.key
+*.crt
+
+# Arquivos de configuração específicos do ambiente
+config/local*
+config/development*
+config/test*
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+
+# Prisma
+prisma/migrations/
+!prisma/schema.prisma
+
