@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Microscope, Radio, Trophy, Glasses, Star } from 'lucide-react'
 
 const ARTraining = () => {
   const [activeTab, setActiveTab] = useState('courses')

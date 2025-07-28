@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Calendar, MessageCircle, Users, Zap, BarChart3, Check, MapPin, FileText, Stethoscope, Scale, Pill, Bot, TrendingUp, Building } from 'lucide-react'
 
 const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('month')

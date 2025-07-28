@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { Radio, Stethoscope, BarChart3, Scale, Syringe, Zap, RefreshCw, Settings, TrendingUp, Phone, Check, X, Info, Battery, Bot, Glasses } from 'lucide-react'
 
 const IoTMonitor = () => {
   const [activeTab, setActiveTab] = useState('devices')
