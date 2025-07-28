@@ -38,7 +38,7 @@ router.post('/process',
       const { transcript, sessionId } = req.body;
       const userId = req.user.id;
 
-      const result = await voiceAgentService.processVoiceInput(userId, transcript, sessionId);
+      const result = await voiceAgentService.processVoice(req.body);
 
       res.json(result);
     } catch (error) {

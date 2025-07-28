@@ -3,6 +3,13 @@ require('dotenv').config()
 const logger = require('./config/logger')
 const { connectDatabase } = require('./config/database')
 const configureExpress = require('./config/express')
+const voiceAgentRoute = require('./routes/voiceAgent');
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+app.use('/voice-agent', voiceAgentRoute);
+
 
 // Função principal para iniciar o servidor
 const startServer = async () => {
@@ -17,6 +24,9 @@ const startServer = async () => {
     const PORT = process.env.BACKEND_PORT || 3000
     const HOST = process.env.BACKEND_HOST || 'localhost'
 
+    app.listen(PORT, HOST, () => {
+    console.log(`Servidor rodando em http://${HOST}:${PORT}`);
+});
     // Iniciar servidor
     const server = app.listen(PORT, HOST, () => {
       logger.info(`🚀 Server running on ${HOST}:${PORT}`)
@@ -73,6 +83,4 @@ if (require.main === module) {
 
 module.exports = { startServer }
 
-const voiceAgentRoutes = require('./routes/voiceAgent');
-app.use('/api/voice-agent', voiceAgentRoutes);
 
