@@ -1,33 +1,25 @@
-const express = require('express')
-const cors = require('cors')
-const helmet = require('helmet')
-const compression = require('compression')
-const rateLimit = require('express-rate-limit')
-const morgan = require('morgan')
-const path = require('path')
+const express = require("express")
+const cors = require("cors")
+const helmet = require("helmet")
+const compression = require("compression")
+const rateLimit = require("express-rate-limit")
+const morgan = require("morgan")
+const path = require("path")
 
-const logger = require('./logger')
-const { errorHandler, notFoundHandler } = require('../middlewares/errorHandler')
-
+const logger = require("./logger")
+const { errorHandler, notFoundHandler } = require("../middlewares/errorHandler")
 
 // Importar rotas
-const authRoutes = require('../routes/auth')
-const userRoutes = require('../routes/user')
-const professionalRoutes = require('../routes/professional')
-const healthRoutes = require('../routes/health')
-
-// Swagger (apenas em desenvolvimento)
-let swaggerUi, specs
-if (process.env.NODE_ENV === 'development' && process.env.SWAGGER_ENABLED === 'true') {
-  swaggerUi = require('swagger-ui-express')
-  specs = require('./swagger')
-}
+const authRoutes = require("../routes/auth")
+const userRoutes = require("../routes/user")
+const professionalRoutes = require("../routes/professional")
+const healthRoutes = require("../routes/health")
 
 const configureExpress = () => {
   const app = express()
 
   // Trust proxy (importante para rate limiting e logs)
-  app.set('trust proxy', 1)
+  app.set("trust proxy", 1)
 
   // Middleware de segurança
   app.use(helmet({
@@ -102,13 +94,12 @@ const configureExpress = () => {
   app.use('/uploads', express.static(path.join(__dirname, '../../uploads')))
 
   // Health check (antes das rotas da API)
-  if (process.env.HEALTH_CHECK_ENABLED === 'true') {
-    const healthRoutes = require('../routes/health');
-    app.use('/health', healthRoutes)
-  }
+  app.use('/health', healthRoutes)
 
   // Documentação Swagger (apenas em desenvolvimento)
-  if (process.env.NODE_ENV === 'development' && process.env.SWAGGER_ENABLED === 'true' && swaggerUi && specs) {
+  if (process.env.NODE_ENV === 'development' && process.env.SWAGGER_ENABLED === 'true') {
+    const swaggerUi = require('swagger-ui-express')
+    const specs = require('./swagger')
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
       explorer: true,
       customCss: '.swagger-ui .topbar { display: none }',
@@ -133,13 +124,9 @@ const configureExpress = () => {
     })
   })
 
-  console.log('Tipo do notFoundHandler:', typeof notFoundHandler)
   // Middleware de rota não encontrada
   app.use(notFoundHandler)
 
-  console.log('Tipo do errorHandler:', typeof errorHandler)
-
- 
   // Middleware de tratamento de erros (deve ser o último)
   app.use(errorHandler)
 

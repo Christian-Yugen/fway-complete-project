@@ -1,23 +1,25 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { Home, BarChart3, Search, Users, Smartphone, User, Bot, Radio, Glasses, Brain, Calendar, PlusCircle } from 'lucide-react'
+
 
 const BottomNav = () => {
   const location = useLocation()
 
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Início' },
-    { path: '/dashboard', icon: '📊', label: 'Dashboard' },
-    { path: '/search', icon: '🔍', label: 'Buscar' },
-    { path: '/network', icon: '🌐', label: 'Rede' },
-    { path: '/social', icon: '📱', label: 'Social' },
-    { path: '/profile', icon: '👤', label: 'Perfil' },
-    { path: '/ai-health', icon: '🤖', label: 'IA Saúde' },
-    { path: '/iot-monitor', icon: '📡', label: 'IoT Monitor' },
-    { path: '/ar-training', icon: '🥽', label: 'AR Training' },
-    { path: '/neurosync', icon: '🧠', label: 'NeuroSync' },
-    { path: '/bookings', icon: '📅', label: 'Reservas' },
-    { path: '/create', icon: '➕', label: 'Criar' }
-  ]
+    { path: '/', icon: <Home size={20} />, label: 'Início' },
+    { path: '/dashboard', icon: <BarChart3 size={20} />, label: 'Dashboard' },
+    { path: '/search', icon: <Search size={20} />, label: 'Buscar' },
+    { path: '/network', icon: <Users size={20} />, label: 'Rede' },
+    { path: '/social', icon: <Smartphone size={20} />, label: 'Social' },
+    { path: '/profile', icon: <User size={20} />, label: 'Perfil' },
+    { path: '/ai-health', icon: <Bot size={20} />, label: 'IA Saúde' },
+    { path: '/iot-monitor', icon: <Radio size={20} />, label: 'IoT Monitor' },
+    { path: '/ar-training', icon: <Glasses size={20} />, label: 'AR Training' },
+    { path: '/neurosync', icon: <Brain size={20} />, label: 'NeuroSync' },
+    { path: '/my-bookings', icon: <Calendar size={20} />, label: 'Consultas' },
+    { path: '/create-service', icon: <PlusCircle size={20} />, label: 'Criar' }
+  ]  
 
   return (
     <nav className="bottom-nav-fixed">

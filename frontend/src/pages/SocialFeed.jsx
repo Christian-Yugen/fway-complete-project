@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Lightbulb, PartyPopper, Trophy, PenTool, Phone, Flame, Camera, BarChart3, MapPin, MessageCircle, RefreshCw, Users, Calendar, Pill } from 'lucide-react'
 
 const SocialFeed = () => {
   const [activeTab, setActiveTab] = useState('feed')

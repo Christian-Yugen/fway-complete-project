@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { 
-  Calendar, 
-  MessageCircle, 
-  Star, 
-  Users, 
+import {
+  Calendar,
+  MessageCircle,
+  Star,
+  Users,
   FileText,
   Edit,
   X,
@@ -49,7 +49,7 @@ const Profile = () => {
     medicalHistory: 'Hipertensão arterial, Diabetes tipo 2'
   })
 
-  // Mock data para atividades
+  // Mock data simplificado para evitar erros
   const activities = [
     {
       id: 1,
@@ -68,28 +68,10 @@ const Profile = () => {
       description: 'Conversa com Dra. Maria Santos sobre exames',
       date: '2024-06-14',
       time: '10:30'
-    },
-    {
-      id: 3,
-      type: 'review',
-      icon: <Star size={16} className="text-yellow-500" />,
-      title: 'Avaliação publicada',
-      description: 'Avaliou Dr. João Silva com 5 estrelas',
-      date: '2024-06-13',
-      time: '16:20'
-    },
-    {
-      id: 4,
-      type: 'connection',
-      icon: <Users size={16} className="text-purple-500" />,
-      title: 'Nova conexão',
-      description: 'Conectou-se com Dr. Rafael Mendes',
-      date: '2024-06-12',
-      time: '09:15'
     }
   ]
 
-  // Mock data para documentos
+  // Mock data simplificado para documentos
   const documents = [
     {
       id: 1,
@@ -106,22 +88,6 @@ const Profile = () => {
       size: '1.8 MB',
       date: '2024-06-10',
       category: 'Exames'
-    },
-    {
-      id: 3,
-      name: 'Receita Médica',
-      type: 'PDF',
-      size: '0.5 MB',
-      date: '2024-06-08',
-      category: 'Receitas'
-    },
-    {
-      id: 4,
-      name: 'Atestado Médico',
-      type: 'PDF',
-      size: '0.3 MB',
-      date: '2024-06-05',
-      category: 'Atestados'
     }
   ]
 
@@ -454,14 +420,6 @@ const Profile = () => {
                   )}
                 </div>
               </div>
-
-              <div className="bg-light p-md" style={{ marginTop: 'var(--spacing-lg)' }}>
-                <h4 className="font-bold text-primary">⚠️ Importante</h4>
-                <p className="text-secondary">
-                  Mantenha suas informações médicas sempre atualizadas. Elas são importantes para que os profissionais 
-                  possam oferecer o melhor atendimento possível.
-                </p>
-              </div>
             </div>
           </div>
         )}
@@ -469,69 +427,34 @@ const Profile = () => {
         {activeTab === 'documents' && (
           <div className="card-professional">
             <div className="card-header">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="card-title">Meus Documentos</h2>
-                  <p className="card-subtitle">Exames, receitas e outros documentos médicos</p>
-                </div>
-                <button className="btn-professional btn-primary">
-                  📤 Enviar Documento
-                </button>
-              </div>
+              <h2 className="card-title">Documentos</h2>
+              <p className="card-subtitle">Seus documentos e exames</p>
             </div>
             <div className="card-body">
               <div className="flex flex-col gap-md">
-                {documents.map((doc) => (
-                  <div key={doc.id} className="card-professional">
-                    <div className="card-body">
-                      <div className="flex items-center gap-md">
-                        <div style={{
-                          width: '48px',
-                          height: '48px',
-                          backgroundColor: 'var(--primary-blue-light)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '20px'
-                        }}>
-                          {doc.type === 'PDF' ? '<File size={16} />' : '<Camera size={16} />'}
-                        </div>
-                        
-                        <div className="flex-1">
-                          <h4 className="professional-name">{doc.name}</h4>
-                          <p className="professional-specialty">{doc.category}</p>
-                          <div className="flex items-center gap-md text-muted">
-                            <span>{doc.type}</span>
-                            <span>{doc.size}</span>
-                            <span>{formatDate(doc.date)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex gap-sm">
-                          <button className="btn-professional btn-secondary btn-sm">
-                            👁️ Visualizar
-                          </button>
-                          <button className="btn-professional btn-outline btn-sm">
-                            📥 Baixar
-                          </button>
-                          <button className="btn-professional btn-outline btn-sm">
-                            🗑️ Excluir
-                          </button>
+                {documents.length > 0 ? (
+                  documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 border rounded-md">
+                      <div className="flex items-center gap-sm">
+                        <FileText size={20} className="text-gray-500" />
+                        <div>
+                          <p className="font-medium">{doc.name}</p>
+                          <p className="text-sm text-secondary">{doc.type} - {doc.size} - {formatDate(doc.date)}</p>
                         </div>
                       </div>
+                      <div className="flex gap-sm">
+                        <button className="btn-professional btn-outline btn-sm"><Download size={16} /></button>
+                        <button className="btn-professional btn-outline btn-sm"><Eye size={16} /></button>
+                        <button className="btn-professional btn-outline btn-sm"><Trash2 size={16} /></button>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-light p-md" style={{ marginTop: 'var(--spacing-lg)' }}>
-                <h4 className="font-bold text-primary"><FileText size={16} /> Dicas para Organizar Documentos</h4>
-                <ul style={{ marginTop: 'var(--spacing-sm)', paddingLeft: 'var(--spacing-md)' }}>
-                  <li className="text-secondary">Use nomes descritivos para seus arquivos</li>
-                  <li className="text-secondary">Organize por categoria (exames, receitas, atestados)</li>
-                  <li className="text-secondary">Mantenha sempre a versão mais recente</li>
-                  <li className="text-secondary">Compartilhe com profissionais quando necessário</li>
-                </ul>
+                  ))
+                ) : (
+                  <p className="text-secondary">Nenhum documento encontrado.</p>
+                )}
+                <button className="btn-professional btn-primary mt-md">
+                  <Upload size={16} /> Fazer Upload de Documento
+                </button>
               </div>
             </div>
           </div>
@@ -541,202 +464,61 @@ const Profile = () => {
           <div className="card-professional">
             <div className="card-header">
               <h2 className="card-title">Configurações de Privacidade</h2>
-              <p className="card-subtitle">Controle quem pode ver suas informações</p>
+              <p className="card-subtitle">Gerencie quem pode ver suas informações</p>
             </div>
             <div className="card-body">
-              <div className="flex flex-col gap-lg">
-                <div className="card-professional">
-                  <div className="card-body">
-                    <h4 className="font-bold text-primary"><Users size={16} /> Visibilidade do Perfil</h4>
-                    <div className="flex flex-col gap-sm" style={{ marginTop: 'var(--spacing-sm)' }}>
-                      <label className="flex items-center gap-sm">
-                        <input type="radio" name="profile-visibility" defaultChecked />
-                        <span>Público - Visível para todos os profissionais</span>
-                      </label>
-                      <label className="flex items-center gap-sm">
-                        <input type="radio" name="profile-visibility" />
-                        <span>Conexões - Apenas profissionais conectados</span>
-                      </label>
-                      <label className="flex items-center gap-sm">
-                        <input type="radio" name="profile-visibility" />
-                        <span>Privado - Apenas você</span>
-                      </label>
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-md">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="profileVisibility" className="font-medium">Visibilidade do Perfil</label>
+                  <select id="profileVisibility" className="form-select">
+                    <option>Público</option>
+                    <option>Somente Conexões</option>
+                    <option>Privado</option>
+                  </select>
                 </div>
-
-                <div className="card-professional">
-                  <div className="card-body">
-                    <h4 className="font-bold text-primary"><Phone size={16} /> Notificações</h4>
-                    <div className="flex flex-col gap-sm" style={{ marginTop: 'var(--spacing-sm)' }}>
-                      <label className="flex items-center justify-between">
-                        <span>Mensagens de profissionais</span>
-                        <input type="checkbox" defaultChecked />
-                      </label>
-                      <label className="flex items-center justify-between">
-                        <span>Lembretes de consultas</span>
-                        <input type="checkbox" defaultChecked />
-                      </label>
-                      <label className="flex items-center justify-between">
-                        <span>Novos profissionais na área</span>
-                        <input type="checkbox" />
-                      </label>
-                      <label className="flex items-center justify-between">
-                        <span>Promoções e ofertas</span>
-                        <input type="checkbox" />
-                      </label>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="dataSharing" className="font-medium">Compartilhamento de Dados</label>
+                  <input type="checkbox" id="dataSharing" className="form-checkbox" />
                 </div>
-
-                <div className="card-professional">
-                  <div className="card-body">
-                    <h4 className="font-bold text-primary"><Shield size={16} /> Segurança</h4>
-                    <div className="flex flex-col gap-sm" style={{ marginTop: 'var(--spacing-sm)' }}>
-                      <button className="btn-professional btn-outline">
-                        🔑 Alterar Senha
-                      </button>
-                      <button className="btn-professional btn-outline">
-                        <Phone size={16} /> Configurar Autenticação em Duas Etapas
-                      </button>
-                      <button className="btn-professional btn-outline">
-                        <FileText size={16} /> Ver Dispositivos Conectados
-                      </button>
-                      <button className="btn-professional btn-outline">
-                        📥 Baixar Meus Dados
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card-professional">
-                  <div className="card-body">
-                    <h4 className="font-bold text-primary">⚠️ Zona de Perigo</h4>
-                    <p className="text-secondary" style={{ marginBottom: 'var(--spacing-sm)' }}>
-                      Ações irreversíveis que afetam permanentemente sua conta.
-                    </p>
-                    <div className="flex flex-col gap-sm">
-                      <button className="btn-professional btn-outline">
-                        🗑️ Excluir Conta
-                      </button>
-                      <button className="btn-professional btn-outline">
-                        📤 Exportar Dados
-                      </button>
-                    </div>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="notificationSettings" className="font-medium">Notificações</label>
+                  <button className="btn-professional btn-outline btn-sm">Gerenciar</button>
                 </div>
               </div>
             </div>
           </div>
         )}
-      </main>
 
-      {/* Sidebar Direita - Atividades Recentes */}
-      <aside className="sidebar-right">
         {/* Atividades Recentes */}
         <div className="card-professional">
           <div className="card-header">
-            <h3 className="card-title"><TrendingUp size={16} /> Atividades Recentes</h3>
+            <h2 className="card-title">Atividades Recentes</h2>
+            <p className="card-subtitle">Seu histórico de interações na plataforma</p>
           </div>
           <div className="card-body">
-            <div className="activity-feed">
-              {activities.map((activity) => (
-                <div key={activity.id} className="activity-item">
-                  <div className="activity-avatar">
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      backgroundColor: 'var(--primary-blue-light)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      {activity.icon}
+            <div className="flex flex-col gap-md">
+              {activities.length > 0 ? (
+                activities.map((activity) => (
+                  <div key={activity.id} className="flex items-center gap-md">
+                    {getActivityIcon(activity.type)}
+                    <div>
+                      <p className="font-medium">{activity.title}</p>
+                      <p className="text-sm text-secondary">{activity.description}</p>
+                      <p className="text-xs text-muted flex items-center gap-1">
+                        <Clock size={12} /> {formatDate(activity.date)} às {activity.time}
+                      </p>
                     </div>
                   </div>
-                  <div className="activity-content">
-                    <div className="activity-header">
-                      <span className="activity-author">{activity.title}</span>
-                      <span className="activity-time">{formatDate(activity.date)}</span>
-                    </div>
-                    <p className="activity-text">{activity.description}</p>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-secondary">Nenhuma atividade recente.</p>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Progresso do Perfil */}
-        <div className="card-professional">
-          <div className="card-header">
-            <h3 className="card-title"><BarChart3 size={16} /> Progresso do Perfil</h3>
-          </div>
-          <div className="card-body">
-            <div className="flex items-center gap-sm" style={{ marginBottom: 'var(--spacing-sm)' }}>
-              <div style={{
-                width: '100%',
-                height: '8px',
-                backgroundColor: 'var(--border-light)',
-                position: 'relative'
-              }}>
-                <div style={{
-                  width: '85%',
-                  height: '100%',
-                  backgroundColor: 'var(--primary-blue)'
-                }}></div>
-              </div>
-              <span className="font-bold text-blue">85%</span>
-            </div>
-            <p className="text-secondary">Seu perfil está quase completo!</p>
-            
-            <div className="flex flex-col gap-sm" style={{ marginTop: 'var(--spacing-md)' }}>
-              <div className="flex items-center gap-sm">
-                <span><Check size={14} /></span>
-                <span className="text-secondary">Informações básicas</span>
-              </div>
-              <div className="flex items-center gap-sm">
-                <span><Check size={14} /></span>
-                <span className="text-secondary">Foto do perfil</span>
-              </div>
-              <div className="flex items-center gap-sm">
-                <span><Check size={14} /></span>
-                <span className="text-secondary">Informações médicas</span>
-              </div>
-              <div className="flex items-center gap-sm">
-                <span>⭕</span>
-                <span className="text-secondary">Verificação de identidade</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Suporte */}
-        <div className="card-professional">
-          <div className="card-header">
-            <h3 className="card-title">🆘 Precisa de Ajuda?</h3>
-          </div>
-          <div className="card-body">
-            <div className="flex flex-col gap-sm">
-              <button className="activity-action">
-                <MessageCircle size={16} /> Chat com Suporte
-              </button>
-              <button className="activity-action">
-                📚 Central de Ajuda
-              </button>
-              <button className="activity-action">
-                <Mail size={16} /> Enviar Feedback
-              </button>
-              <button className="activity-action">
-                <Phone size={16} /> Contato Telefônico
-              </button>
-            </div>
-          </div>
-        </div>
-      </aside>
+      </main>
     </div>
   )
 }
 
 export default Profile
-

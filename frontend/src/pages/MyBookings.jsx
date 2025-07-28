@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Calendar, Check, X, BarChart3, Search, MessageCircle, User, Star, Laptop, Building, DollarSign } from 'lucide-react'
 
 const MyBookings = () => {
   const [activeTab, setActiveTab] = useState('upcoming')
