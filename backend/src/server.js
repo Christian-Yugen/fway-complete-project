@@ -73,3 +73,6 @@ if (require.main === module) {
 
 module.exports = { startServer }
 
+const voiceAgentRoutes = require('./routes/voiceAgent');
+app.use('/api/voice-agent', voiceAgentRoutes);
+

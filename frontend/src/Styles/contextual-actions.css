@@ -1,0 +1,240 @@
+/* Estilos para Ações Contextuais */
+
+.contextual-actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  align-items: center;
+}
+
+.contextual-actions--header {
+  gap: 0;
+}
+
+.contextual-actions--sidebar {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.contextual-actions--inline {
+  flex-wrap: wrap;
+}
+
+.contextual-action {
+  transition: all 0.2s ease;
+  position: relative;
+  text-decoration: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-primary, #333);
+}
+
+.contextual-action:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contextual-action--high {
+  background: linear-gradient(135deg, #0a66c2, #0073b1);
+  color: white;
+  border-color: #0a66c2;
+}
+
+.contextual-action--high:hover {
+  background: linear-gradient(135deg, #004182, #0a66c2);
+  color: white;
+}
+
+.contextual-action--medium {
+  background: #f3f6f8;
+  color: #0a66c2;
+  border-color: #e1e9ee;
+}
+
+.contextual-action--medium:hover {
+  background: #e1e9ee;
+  border-color: #0a66c2;
+}
+
+.contextual-action--low {
+  background: transparent;
+  color: #666;
+  border-color: #ddd;
+}
+
+.contextual-action--low:hover {
+  background: #f8f9fa;
+  border-color: #999;
+}
+
+/* Animação sutil para ações de alta prioridade */
+.contextual-action--high {
+  animation: subtle-pulse 3s infinite;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(10, 102, 194, 0.4);
+  }
+  50% { 
+    transform: scale(1.02); 
+    box-shadow: 0 0 0 4px rgba(10, 102, 194, 0.1);
+  }
+}
+
+/* Estilos para Task Cards */
+.contextual-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg, 24px);
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+.task-card {
+  background: white;
+  border: 1px solid #e1e9ee;
+  border-radius: 12px;
+  padding: var(--spacing-lg, 24px);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: #0a66c2;
+}
+
+.task-card--high {
+  border-left: 4px solid #0a66c2;
+}
+
+.task-card--medium {
+  border-left: 4px solid #057642;
+}
+
+.task-card--normal {
+  border-left: 4px solid #666;
+}
+
+.task-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md, 16px);
+  margin-bottom: var(--spacing-lg, 24px);
+}
+
+.task-card__icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f3f6f8, #e1e9ee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0a66c2;
+}
+
+.task-card__content {
+  flex: 1;
+}
+
+.task-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.task-card__description {
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.task-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 12px);
+}
+
+.task-card__secondary-actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  flex-wrap: wrap;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .contextual-cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md, 16px);
+  }
+  
+  .contextual-actions--header {
+    display: none; /* Ocultar ações contextuais no header em mobile */
+  }
+  
+  .task-card {
+    padding: var(--spacing-md, 16px);
+  }
+  
+  .task-card__header {
+    gap: var(--spacing-sm, 12px);
+    margin-bottom: var(--spacing-md, 16px);
+  }
+  
+  .task-card__icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .task-card__title {
+    font-size: 16px;
+  }
+}
+
+/* Integração com estilos existentes do Fway */
+.contextual-action.header-nav-item {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 0 4px;
+}
+
+.contextual-action.header-nav-item .header-nav-icon {
+  margin-bottom: 4px;
+}
+
+.contextual-action.header-nav-item .header-nav-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Estados especiais */
+.contextual-action:focus {
+  outline: 2px solid #0a66c2;
+  outline-offset: 2px;
+}
+
+.contextual-action:active {
+  transform: translateY(0);
+}
+
+.contextual-action[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
