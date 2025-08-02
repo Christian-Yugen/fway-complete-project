@@ -1,3 +1,14 @@
+// ===== RELACIONAMENTOS ADICIONAIS PARA MODELOS EXISTENTES =====
+
+// Adicionar ao modelo User existente:
+// userShield    UserShield?
+// userCoverages UserCoverage[]
+// claims        Claim[]
+// userRewards   UserReward[]
+
+// Adicionar ao modelo Booking existente:
+// userCoverage  UserCoverage? // Cobertura ativada para este agendamento
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -1020,14 +1031,5 @@ model DynamicPricingLog {
   @@map("dynamic_pricing_logs")
 }
 
-// ===== RELACIONAMENTOS ADICIONAIS PARA MODELOS EXISTENTES =====
 
-// Adicionar ao modelo User existente:
-// userShield    UserShield?
-// userCoverages UserCoverage[]
-// claims        Claim[]
-// userRewards   UserReward[]
-
-// Adicionar ao modelo Booking existente:
-// userCoverage  UserCoverage? // Cobertura ativada para este agendamento
 
