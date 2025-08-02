@@ -13,6 +13,7 @@ datasource db {
 // Modelo de usuário
 model User {
   id        String   @id @default(cuid())
+  name      String
   email     String   @unique
   password  String
   role      String   @default("USER")
@@ -28,6 +29,7 @@ model User {
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
   
   // Verificação de email
   emailVerified Boolean @default(false)
@@ -42,6 +44,18 @@ model User {
   refreshTokens RefreshToken[]
   bookings      Booking[]
   reviews       Review[]
+  medicalProfile       MedicalProfile?
+  aiInteractions       AIInteraction[]
+  triageResults        TriageResult[]
+  symptomAnalyses      SymptomAnalysis[]
+  riskAssessments      RiskAssessment[]
+  aiRecommendations    AIRecommendation[]
+  intelligentMatches   IntelligentMatch[]
+  userShield           UserShield?
+  userCoverages        UserCoverage[]
+  claims               Claim[]
+  userRewards          UserReward[]
+  dynamicPricingLogs   DynamicPricingLog[]
   
   @@map("users")
 }
@@ -50,6 +64,8 @@ model User {
 model UserProfile {
   id     String @id @default(cuid())
   userId String @unique
+  bio    String?
+  avatarUrl String?
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   // Informações adicionais
@@ -122,7 +138,8 @@ model Professional {
   services  Service[]
   bookings  Booking[]
   reviews   Review[]
-  
+  intelligentMatches IntelligentMatch[] // Opposite relation for IntelligentMatch
+
   @@map("professionals")
 }
 
@@ -150,10 +167,12 @@ model Service {
 // Agendamentos
 model Booking {
   id             String @id @default(cuid())
+  date           DateTime
   userId         String
   user           User   @relation(fields: [userId], references: [id])
   professionalId String
   professional   Professional @relation(fields: [professionalId], references: [id])
+  userCoverageId String?
   serviceId      String
   service        Service @relation(fields: [serviceId], references: [id])
   
@@ -181,6 +200,7 @@ model Review {
   id        String @id @default(cuid())
   bookingId String @unique
   booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  content   String
   userId    String
   user      User   @relation(fields: [userId], references: [id])
   professionalId String
@@ -208,4 +228,806 @@ model AuditLog {
   
   @@map("audit_logs")
 }
+
+// Modelos de dados aprimorados para FWAY Brain - IA Médica
+// Adicionar ao schema.prisma existente
+
+// ===== MODELOS PARA IA MÉDICA AVANÇADA =====
+
+// Perfil médico detalhado do usuário
+model MedicalProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  
+  // Informações básicas de saúde
+  bloodType    String?  // Tipo sanguíneo
+  height       Float?   // Altura em cm
+  weight       Float?   // Peso em kg
+  allergies    String?
+  conditions   String?  // JSON array com alergias
+  chronicConditions String? // JSON array com condições crônicas
+  
+  // Histórico familiar
+  familyHistory String? // JSON com histórico familiar de doenças
+  
+  // Estilo de vida
+  smokingStatus String? // NEVER, FORMER, CURRENT
+  alcoholConsumption String? // NONE, LIGHT, MODERATE, HEAVY
+  exerciseFrequency String? // SEDENTARY, LIGHT, MODERATE, INTENSE
+  dietType     String?  // OMNIVORE, VEGETARIAN, VEGAN, etc.
+  
+  // Medicamentos atuais
+  currentMedications String? // JSON array com medicamentos
+  
+  // Dados vitais mais recentes
+  lastBloodPressure String? // Pressão arterial
+  lastHeartRate    Int?     // Frequência cardíaca
+  lastGlucose      Float?   // Glicemia
+  lastCholesterol  Float?   // Colesterol
+  
+  // Preferências de atendimento
+  preferredLanguage String? @default("pt-BR")
+  communicationStyle String? // DIRECT, DETAILED, SIMPLE
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relacionamentos
+  triageResults     TriageResult[]
+  symptomAnalyses   SymptomAnalysis[]
+  riskAssessments   RiskAssessment[]
+  aiRecommendations AIRecommendation[]
+  
+  @@map("medical_profiles")
+}
+
+// Interações com IA
+model AIInteraction {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message         String  // ID da mensagem associada (se aplicável)
+  response       String  // Resposta da IA
+  // Tipo de interação
+  type            String   // CHAT, TRIAGE, SENTIMENT, NLP, RECOMMENDATION, RISK_ASSESSMENT, etc.
+  
+  // Dados da interação
+  input           String   // Input do usuário
+  output          String   // Output da IA
+  confidence      Float    // Confiança da IA (0-1)
+  processingTime  Int      // Tempo de processamento em ms
+  
+  // Contexto e metadados
+  sessionId       String?  // ID da sessão (para chats)
+  context         String?  // Contexto da interação
+  metadata        String?  // JSON com metadados adicionais
+  
+  // Feedback do usuário
+  userRating      Int?     // 1-5 rating do usuário
+  userFeedback    String?  // Feedback textual
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  
+  @@map("ai_interactions")
+}
+
+// Resultados de triagem inteligente
+model TriageResult {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicalProfileId  String?
+  medicalProfile    MedicalProfile? @relation(fields: [medicalProfileId], references: [id])
+  
+  // Dados de entrada
+  symptoms          String   // JSON array com sintomas
+  severity          String   // LOW, MEDIUM, HIGH
+  duration          String   // Duração dos sintomas
+  
+  // Resultado da triagem
+  urgencyLevel      String   // LOW, MEDIUM, HIGH, EMERGENCY
+  confidence        Float    // Confiança da IA
+  
+  // Análise da IA
+  possibleConditions String  // JSON array com possíveis condições
+  recommendations   String   // JSON array com recomendações
+  aiAnalysis        String   // JSON com análise detalhada da IA
+  
+  // Dados do paciente no momento da triagem
+  patientAge        Int?
+  patientGender     String?
+  patientHistory    String?  // JSON com histórico relevante
+  
+  // Follow-up
+  followUpRequired  Boolean  @default(false)
+  followUpDate      DateTime?
+  
+  // Validação médica (se aplicável)
+  medicalValidation String?  // Validação por profissional
+  validatedBy       String?  // ID do profissional que validou
+  validatedAt       DateTime?
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("triage_results")
+}
+
+// Análise de sintomas avançada
+model SymptomAnalysis {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicalProfileId  String
+  medicalProfile    MedicalProfile? @relation(fields: [medicalProfileId], references: [id])
+  
+  // Sintomas analisados
+  symptoms          String   // JSON array com sintomas detalhados
+  symptomDuration   String   // Duração dos sintomas
+  symptomProgression String? // Como os sintomas evoluíram
+  
+  // Análise da IA
+  analysis          String   // JSON com análise completa
+  possibleConditions String  // JSON array com condições possíveis
+  confidence        Float    // Confiança geral da análise
+  urgencyLevel      String   // LOW, MEDIUM, HIGH, EMERGENCY
+  
+  // Recomendações
+  recommendations   String   // JSON array com recomendações
+  nextSteps         String   // JSON array com próximos passos
+  
+  // Fatores considerados
+  riskFactors       String?  // JSON com fatores de risco considerados
+  protectiveFactors String?  // JSON com fatores protetivos
+  
+  // Especialidades recomendadas
+  recommendedSpecialties String? // JSON array com especialidades
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("symptom_analyses")
+}
+
+// Avaliações de risco de saúde
+model RiskAssessment {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicalProfileId  String
+  medicalProfile    MedicalProfile? @relation(fields: [medicalProfileId], references: [id])
+  
+  // Fatores de risco avaliados
+  factors           String   // JSON com fatores de risco
+  riskScore         Float    // Score de risco (0-100)
+  riskLevel         String   // LOW, MEDIUM, HIGH, VERY_HIGH
+  confidence        Float    // Confiança da avaliação
+  
+  // Análise detalhada
+  analysis          String   // JSON com análise detalhada
+  recommendations   String   // JSON array com recomendações
+  preventiveMeasures String  // JSON array com medidas preventivas
+  
+  // Categorias de risco
+  cardiovascularRisk Float?  // Risco cardiovascular
+  diabetesRisk      Float?   // Risco de diabetes
+  cancerRisk        Float?   // Risco de câncer
+  mentalHealthRisk  Float?   // Risco de problemas mentais
+  
+  // Fatores modificáveis
+  modifiableFactors String?  // JSON com fatores que podem ser modificados
+  
+  // Acompanhamento
+  nextAssessmentDate DateTime? // Próxima avaliação recomendada
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("risk_assessments")
+}
+
+// Recomendações personalizadas da IA
+model AIRecommendation {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recomendationId     String  // ID da recomendação associada (se aplicável)
+  medicalProfileId  String
+  medicalProfile    MedicalProfile? @relation(fields: [medicalProfileId], references: [id])
+  
+  // Tipo de recomendação
+  type              String   // PROFESSIONAL, EXAM, LIFESTYLE, MEDICATION, PREVENTION
+  category          String   // URGENT, ROUTINE, PREVENTIVE, WELLNESS
+  
+  // Conteúdo da recomendação
+  title             String
+  description       String
+  recommendations   String   // JSON array com recomendações detalhadas
+  reasoning         String   // JSON com raciocínio da IA
+  
+  // Prioridade e confiança
+  priority          String   // LOW, MEDIUM, HIGH, URGENT
+  confidence        Float    // Confiança da IA
+  
+  // Dados contextuais
+  basedOnSymptoms   String?  // JSON com sintomas que geraram a recomendação
+  basedOnHistory    String?  // JSON com histórico considerado
+  basedOnRisk       String?  // JSON com fatores de risco considerados
+  
+  // Status da recomendação
+  status            String   @default("PENDING") // PENDING, VIEWED, ACCEPTED, REJECTED, COMPLETED
+  userFeedback      String?  // Feedback do usuário
+  userRating        Int?     // Rating 1-5
+  
+  // Validade
+  validUntil        DateTime? // Até quando a recomendação é válida
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("ai_recommendations")
+}
+
+// Matching inteligente entre pacientes e profissionais
+model IntelligentMatch {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  professionalId    String
+  score             Float    // Score de compatibilidade (0-100)
+  professional      Professional @relation(fields: [professionalId], references: [id])
+  
+  // Dados do matching
+  matchScore        Float    // Score de compatibilidade (0-100)
+  confidence        Float    // Confiança do algoritmo
+  
+  // Fatores considerados
+  specialtyMatch    Float    // Compatibilidade de especialidade
+  locationMatch     Float    // Compatibilidade de localização
+  availabilityMatch Float    // Compatibilidade de disponibilidade
+  experienceMatch   Float    // Compatibilidade de experiência
+  personalityMatch  Float?   // Compatibilidade de personalidade
+  languageMatch     Float?   // Compatibilidade de idioma
+  
+  // Razões do match
+  matchReasons      String   // JSON array com razões do match
+  
+  // Contexto do matching
+  requestContext    String   // JSON com contexto da solicitação
+  symptoms          String?  // Sintomas que motivaram o match
+  urgencyLevel      String?  // Nível de urgência
+  
+  // Resultado
+  status            String   @default("SUGGESTED") // SUGGESTED, CONTACTED, BOOKED, REJECTED
+  userFeedback      String?  // Feedback do usuário sobre o match
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("intelligent_matches")
+}
+
+// Base de conhecimento médico
+model MedicalKnowledge {
+  id                String   @id @default(cuid())
+  
+  // Identificação
+  code              String   @unique // Código único (ex: ICD-10)
+  name              String   // Nome da condição/procedimento
+  category          String   // Categoria médica
+  specialty         String   // Especialidade médica
+  
+  // Descrição
+  description       String   // Descrição detalhada
+  symptoms          String   // JSON array com sintomas
+  causes            String?  // JSON array com causas
+  riskFactors       String?  // JSON array com fatores de risco
+  
+  // Tratamento
+  treatments        String?  // JSON array com tratamentos
+  medications       String?  // JSON array com medicamentos
+  procedures        String?  // JSON array com procedimentos
+  
+  // Prognóstico
+  prognosis         String?  // Prognóstico geral
+  complications     String?  // JSON array com complicações possíveis
+  
+  // Prevenção
+  prevention        String?  // JSON array com medidas preventivas
+  
+  // Dados epidemiológicos
+  prevalence        Float?   // Prevalência na população
+  incidence         Float?   // Incidência anual
+  mortality         Float?   // Taxa de mortalidade
+  
+  // Metadados
+  sources           String?  // JSON array com fontes
+  lastReviewed      DateTime? // Última revisão
+  confidence        Float    @default(1.0) // Confiança na informação
+  
+  // Status
+  isActive          Boolean  @default(true)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("medical_knowledge")
+}
+
+// Interações medicamentosas
+model DrugInteraction {
+  id                String   @id @default(cuid())
+  
+  // Medicamentos
+  drug1             String   // Nome do primeiro medicamento
+  drug2             String   // Nome do segundo medicamento
+  
+  // Tipo de interação
+  interactionType   String   // MAJOR, MODERATE, MINOR
+  severity          String   // HIGH, MEDIUM, LOW
+  
+  // Descrição da interação
+  description       String   // Descrição da interação
+  mechanism         String?  // Mecanismo da interação
+  effects           String   // JSON array com efeitos
+  
+  // Recomendações
+  recommendations   String   // JSON array com recomendações
+  alternatives      String?  // JSON array com alternativas
+  
+  // Monitoramento
+  monitoring        String?  // JSON array com parâmetros a monitorar
+  
+  // Metadados
+  sources           String?  // JSON array com fontes
+  confidence        Float    @default(1.0)
+  
+  // Status
+  isActive          Boolean  @default(true)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("drug_interactions")
+}
+
+// Modelos de IA treinados
+model AIModel {
+  id                String   @id @default(cuid())
+  
+  // Identificação
+  name              String   // Nome do modelo
+  version           String   // Versão do modelo
+  type              String   // TRIAGE, SYMPTOM_ANALYSIS, RISK_ASSESSMENT, etc.
+  
+  // Configuração
+  modelPath         String?  // Caminho para o modelo
+  parameters        String   // JSON com parâmetros do modelo
+  hyperparameters   String?  // JSON com hiperparâmetros
+  
+  // Performance
+  accuracy          Float?   // Acurácia do modelo
+  precision         Float?   // Precisão
+  recall            Float?   // Recall
+  f1Score           Float?   // F1 Score
+  
+  // Dados de treinamento
+  trainingDataSize  Int?     // Tamanho do dataset de treinamento
+  validationDataSize Int?    // Tamanho do dataset de validação
+  testDataSize      Int?     // Tamanho do dataset de teste
+  
+  // Metadados
+  description       String?  // Descrição do modelo
+  trainedBy         String?  // Quem treinou o modelo
+  trainedAt         DateTime? // Quando foi treinado
+  
+  // Status
+  isActive          Boolean  @default(false)
+  isProduction      Boolean  @default(false)
+  
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("ai_models")
+}
+
+// ===== RELACIONAMENTOS ADICIONAIS PARA MODELOS EXISTENTES =====
+
+// Adicionar ao modelo User existente:
+// medicalProfile    MedicalProfile?
+// aiInteractions    AIInteraction[]
+// triageResults     TriageResult[]
+// symptomAnalyses   SymptomAnalysis[]
+// riskAssessments   RiskAssessment[]
+// aiRecommendations AIRecommendation[]
+// intelligentMatches IntelligentMatch[]
+
+// Adicionar ao modelo Professional existente:
+// intelligentMatches IntelligentMatch[]
+
+// Modelos de dados aprimorados para FWAY Shield - Microsseguros Dinâmicos
+// Adicionar ao schema.prisma existente
+
+// ===== MODELOS PARA MICROSSEGUROS DINÂMICOS =====
+
+// Configuração do Shield do usuário
+model UserShield {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Score de risco dinâmico
+  riskScore    Float    @default(85.0)  // 0-100, menor = menor risco
+  riskFactors  String?  // JSON com fatores de risco detalhados
+  
+  // Nível do Shield
+  shieldLevel  String   @default("BRONZE") // BRONZE, SILVER, GOLD, PLATINUM
+  totalPoints  Int      @default(0)
+  
+  // Configurações
+  isActive     Boolean  @default(true)
+  autoRenewal  Boolean  @default(true)
+  
+  // Dados epidemiológicos
+  region       String?  // Para ajuste de risco regional
+  zipCode      String?
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relacionamentos
+  coverage    UserCoverage[] @relation("UserShieldToUserCoverage")
+  claims       Claim[]
+  rewards      UserReward[]
+  riskHistory  RiskScoreHistory[]
+  
+  @@map("user_shields")
+}
+
+// Tipos de cobertura disponíveis
+model Coverage {
+  id          String   @id @default(cuid())
+  
+  // Informações básicas
+  name        String
+  description String
+  type        String   // BASIC, EXTENDED, EMERGENCY, FAMILY
+  category    String   // CONSULTATION, EXAM, PROCEDURE, EMERGENCY
+  
+  // Configuração de preços
+  baseRate    Float    // Taxa base para cálculo do prêmio
+  minPremium  Float    // Prêmio mínimo
+  maxPremium  Float    // Prêmio máximo
+  
+  // Limites de cobertura
+  maxCoverage Float    // Valor máximo de cobertura
+  deductible  Float?   // Franquia
+  
+  // Configurações
+  isActive    Boolean  @default(true)
+  isPerTransaction Boolean @default(true) // Se é ativado por transação
+  
+  // Duração padrão (em dias)
+  defaultDuration Int @default(30)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  userCoverages UserCoverage[]
+  
+  @@map("coverages")
+}
+
+// Cobertura ativa do usuário (microsseguro por transação)
+model UserCoverage {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  coverageId String
+  coverage   Coverage @relation(fields: [coverageId], references: [id])
+  userShieldId String?
+  userShield   UserShield? @relation("UserShieldToUserCoverage", fields: [userShieldId], references: [id])
+  
+  // Detalhes da transação
+  serviceId     String?  // ID do serviço/agendamento que ativou o seguro
+  serviceValue  Float    // Valor do serviço coberto
+  premium       Float    // Prêmio calculado dinamicamente
+  
+  // Período de cobertura
+  startDate     DateTime
+  endDate       DateTime
+  duration      Int      // Duração em dias
+  
+  // Status
+  isActive      Boolean  @default(true)
+  status        String   @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED, CLAIMED
+  
+  // Dados da precificação dinâmica
+  riskScoreAtCreation Float // Risk score no momento da criação
+  epidemiologicalData String? // JSON com dados epidemiológicos usados
+  pricingFactors      String? // JSON com fatores usados na precificação
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relacionamentos
+  claims        Claim[]
+  
+  @@map("user_coverages")
+}
+
+// Sinistros/Claims
+model Claim {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  userShieldId     String
+  userShield       UserShield @relation(fields: [userShieldId], references: [id])
+  coverageId       String
+  coverage         UserCoverage @relation(fields: [coverageId], references: [id])
+  
+  // Detalhes do sinistro
+  type             String   // CONSULTATION, EXAM, PROCEDURE, EMERGENCY
+  description      String
+  amount           Float    // Valor solicitado
+  
+  // Status e processamento
+  status           String   @default("PENDING") // PENDING, APPROVED, REJECTED, PROCESSING
+  severity         String   @default("LOW") // LOW, MEDIUM, HIGH, CRITICAL
+  
+  // Análise por IA/NLP
+  nlpAnalysis      String?  // JSON com análise de linguagem natural
+  aiConfidence     Float?   // Confiança da IA na análise (0-1)
+  autoProcessed    Boolean  @default(false)
+  
+  // Aprovação/Rejeição
+  approvedAt       DateTime?
+  approvedBy       String?  // ID do usuário ou "SYSTEM_AI"
+  rejectedAt       DateTime?
+  rejectedBy       String?
+  rejectionReason  String?
+  
+  // Pagamento
+  payoutAmount     Float?
+  payoutDate       DateTime?
+  payoutMethod     String?
+  
+  // Anexos
+  attachments      String?  // JSON array com URLs dos anexos
+  
+  // Timestamps
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relacionamentos
+  messages         ClaimMessage[]
+  
+  @@map("claims")
+}
+
+// Mensagens do sinistro (chat)
+model ClaimMessage {
+  id          String   @id @default(cuid())
+  claimId     String
+  claim       Claim    @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  senderId    String   // ID do usuário ou sistema
+  message     String   // Mensagem enviada
+  timestamp   DateTime @default(now())
+  // Conteúdo
+  content     String
+  type        String   @default("TEXT") // TEXT, IMAGE, DOCUMENT, SYSTEM
+  
+  // Análise NLP
+  nlpAnalysis String?  // JSON com análise da mensagem
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  
+  @@map("claim_messages")
+}
+
+// Histórico de risk score
+model RiskScoreHistory {
+  id           String   @id @default(cuid())
+  userShieldId String
+  userShield   UserShield @relation(fields: [userShieldId], references: [id], onDelete: Cascade)
+  
+  // Dados do score
+  riskScore    Float
+  factors      String   // JSON com fatores que influenciaram o score
+  trigger      String   // O que causou a atualização (BOOKING, CLAIM, PERIODIC, etc.)
+  score        Float?   // Score calculado (0-100)
+
+  // Timestamps
+  createdAt    DateTime @default(now())
+  
+  @@map("risk_score_history")
+}
+
+// Dados epidemiológicos por região
+model EpidemiologicalData {
+  id           String   @id @default(cuid())
+  
+  // Localização
+  region       String
+  state        String
+  city         String?
+  zipCode      String?
+  
+  // Dados de saúde
+  diseaseType  String   // Tipo de doença/condição
+  incidence    Float    // Taxa de incidência
+  severity     Float    // Severidade média
+  seasonality  String?  // JSON com dados de sazonalidade
+  
+  // Período dos dados
+  periodStart  DateTime
+  periodEnd    DateTime
+  
+  // Fonte dos dados
+  source       String
+  reliability  Float    @default(1.0) // 0-1, confiabilidade da fonte
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("epidemiological_data")
+}
+
+// Algoritmos atuariais configuráveis
+model ActuarialModel {
+  id           String   @id @default(cuid())
+  
+  // Identificação
+  name         String
+  version      String
+  description  String?
+  
+  // Configuração do modelo
+  formula      String   // Fórmula matemática ou referência ao algoritmo
+  parameters   String   // JSON com parâmetros do modelo
+  weights      String   // JSON com pesos dos fatores
+  
+  // Aplicabilidade
+  coverageTypes String  // JSON array com tipos de cobertura aplicáveis
+  riskFactors   String  // JSON array com fatores de risco considerados
+  
+  // Status
+  isActive     Boolean  @default(true)
+  isDefault    Boolean  @default(false)
+  
+  // Validação
+  accuracy     Float?   // Precisão do modelo (0-1)
+  lastTested   DateTime?
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("actuarial_models")
+}
+
+// Recompensas do Shield
+model Reward {
+  id           String   @id @default(cuid())
+  
+  // Informações básicas
+  name         String
+  description  String
+  type         String   // DISCOUNT, CASHBACK, UPGRADE, BENEFIT
+  
+  // Custo e benefício
+  pointsCost   Int
+  value        Float?   // Valor monetário do benefício
+  discount     Float?   // Percentual de desconto
+  
+  // Configurações
+  isActive     Boolean  @default(true)
+  isRepeatable Boolean  @default(false)
+  maxRedemptions Int?   // Máximo de resgates por usuário
+  
+  // Validade
+  validFrom    DateTime?
+  validUntil   DateTime?
+  
+  // Timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relacionamentos
+  userRewards  UserReward[]
+  
+  @@map("rewards")
+}
+
+// Recompensas resgatadas pelo usuário
+model UserReward {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userShieldId String
+  userShield   UserShield @relation(fields: [userShieldId], references: [id])
+  rewardId     String
+  reward       Reward   @relation(fields: [rewardId], references: [id])
+  
+  // Detalhes do resgate
+  pointsSpent  Int
+  status       String   @default("ACTIVE") // ACTIVE, USED, EXPIRED
+  
+  // Uso
+  usedAt       DateTime?
+  expiresAt    DateTime?
+  
+  // Timestamps
+  earnedAt     DateTime @default(now())
+  
+  @@map("user_rewards")
+}
+
+// Transações de precificação dinâmica (log)
+model DynamicPricingLog {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  price            Float    // Preço calculado
+  coverageId       String
+  
+  // Dados da transação
+  serviceValue     Float
+  calculatedPremium Float
+  finalPremium     Float    // Pode ser diferente se houver descontos
+  
+  // Fatores de precificação
+  riskScore        Float
+  baseRate         Float
+  riskMultiplier   Float
+  regionalFactor   Float
+  seasonalFactor   Float?
+  discountApplied  Float?
+  
+  // Dados epidemiológicos usados
+  epidemiologicalFactors String? // JSON
+  
+  // Modelo atuarial usado
+  actuarialModelId String?
+  modelVersion     String?
+  
+  // Resultado
+  approved         Boolean
+  reason           String?  // Motivo se rejeitado
+  
+  // Timestamps
+  createdAt        DateTime @default(now())
+  timestamp        DateTime @default(now())
+  
+  @@map("dynamic_pricing_logs")
+}
+
+// ===== RELACIONAMENTOS ADICIONAIS PARA MODELOS EXISTENTES =====
+
+// Adicionar ao modelo User existente:
+// userShield    UserShield?
+// userCoverages UserCoverage[]
+// claims        Claim[]
+// userRewards   UserReward[]
+
+// Adicionar ao modelo Booking existente:
+// userCoverage  UserCoverage? // Cobertura ativada para este agendamento
 
