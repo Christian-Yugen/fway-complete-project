@@ -222,7 +222,7 @@ const matchProfessional = async (req, res) => {
  */
 const healthRiskAnalysis = async (req, res) => {
   try {
-    const { factors, lifestyle, familyHistory, medicalHistory, demographics } = req.body;
+    const { factors, lifestyle, familyHistory, demographics } = req.body;
     const userId = req.user?.id;
 
     // Buscar perfil médico existente

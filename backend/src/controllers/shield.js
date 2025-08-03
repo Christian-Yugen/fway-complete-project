@@ -632,4 +632,4 @@ async function calculateRiskScore(userId) {
       COUNT(CASE WHEN b.status = 'COMPLETED' THEN 1 END) as completed_bookings,
       COUNT(CASE WHEN b.status = 'CANCELLED' THEN 1 END) as cancelled_bookings,
       COU
-(Content truncated due to size limit. Use line ranges to read in chunks)
+(Content truncated due to size limit. Use line ranges to read in chunks), 
